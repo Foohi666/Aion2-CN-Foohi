@@ -1,0 +1,11 @@
+{
+  "version": "1.2.1.6",
+  "steamBuildId": "26077854",
+  "repository": "Foohi666/Aion2-CN-Foohi",
+  "upstream": {
+    "repository": "duoluoyuji/Aion2-Steam-CN",
+    "version": "1.2.1",
+    "date": "2026-10-14",
+    "commit": "962f17db387709a54bf4e0554e06ec26c945623d"
+  }
+}
