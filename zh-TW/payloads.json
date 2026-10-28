@@ -3,7 +3,7 @@
   "Files": [
     {
       "Language": "ja-JP",
-      "SHA256": "41cb6ddeec56597faab9612431aef6ccc8fe76a2ea1b122616a7659ced8bcdc4"
+      "SHA256": "779f9217902d0f9e65984fd47a37618b065bb6b22374f47c405d91ceb38368d2"
     }
   ],
   "OriginalFiles": {
@@ -35,6 +35,10 @@
     ]
   },
   "PreviousFiles": [
+    {
+      "Language": "ja-JP",
+      "SHA256": "41cb6ddeec56597faab9612431aef6ccc8fe76a2ea1b122616a7659ced8bcdc4"
+    },
     {
       "Language": "ja-JP",
       "SHA256": "2fd231b068cc976298c4865cd5600dba2caecb3d091ec31d80958342b3d08b7c"
