@@ -530,7 +530,7 @@ $btnRestore.Add_Click({ Execute-TextOperation 'Restore' '' '' })
 # --- 窗口加载初始化 ---
 $mainForm.Add_Shown({
     Append-Log "欢迎使用 AION 2 国际服简繁双语一键汉化大师 v$CurrentVersion！"
-    Append-Log "原作者：B站@吃素的佩奇；二次升级作者：Foohi。适配 Steam build 26077854。"
+    Append-Log "原作者：B站@吃素的佩奇；二次升级作者：Foohi。适配 Steam build 26262663。"
     Run-Scan
 })
 
