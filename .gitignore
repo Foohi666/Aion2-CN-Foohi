@@ -1,3 +1,5 @@
 dist/
 __pycache__/
 *.log
+/zh/ja-JP/L10NString.dat
+/zh-TW/ja-JP/L10NString.dat
