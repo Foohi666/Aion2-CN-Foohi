@@ -2,45 +2,11 @@
   "SteamBuildId": "26262663",
   "Files": [
     {
-      "Language": "en-US",
-      "SHA256": "ec10ccbef022c6315bdc1c1a93be4a5136d74d6221d52bd8af9600e076c1ae06"
-    },
-    {
       "Language": "ja-JP",
-      "SHA256": "35fa092c6d21a7788e62a8f5aec43851faba264eb1e52c37eb13beb80df11091"
-    },
-    {
-      "Language": "ko-KR",
-      "SHA256": "38192de7553e092fd84a845b6ba3f1c600d144c7ef56973da8aabb7537fde02c"
+      "SHA256": "41cb6ddeec56597faab9612431aef6ccc8fe76a2ea1b122616a7659ced8bcdc4"
     }
   ],
   "OriginalFiles": {
-    "en-US": [
-      {
-        "Name": "pakchunk502000-Windows_0_P.pak",
-        "Hash": "6c156d58d93cad782ef747b57b0eb2decf6e22e9e8bf5f29619cf350baa04ca3",
-        "SteamSHA1": "02ab65482cc46919301cf73659347ec78982ce0a",
-        "Size": 3750515
-      },
-      {
-        "Name": "pakchunk502000-Windows_0_P.sig",
-        "Hash": "0c33b72da6c6e3e5e335f76f4cb950d6ef473322fdfb2d0bd1a78e64b0b23546",
-        "SteamSHA1": "423e02a58c39c858edb3908dd8a0d4c03f6e3198",
-        "Size": 760
-      },
-      {
-        "Name": "pakchunk502000-Windows_0_P.ucas",
-        "Hash": "c8e7146240adc7718e7e7d0b65468a8c71f4c7dd1f8a96e60d9a8daddc30be4f",
-        "SteamSHA1": "139bd4bb97f16123b6a87da0563db5835b25ef6e",
-        "Size": 48
-      },
-      {
-        "Name": "pakchunk502000-Windows_0_P.utoc",
-        "Hash": "588dd500e88bd7cc6170831e78c3409c275018ae13a9c1a8fc21633e43612c7e",
-        "SteamSHA1": "ff9bbbb7cbd9c878bc54dccd1b867d8f470bf227",
-        "Size": 1297
-      }
-    ],
     "ja-JP": [
       {
         "Name": "pakchunk503000-Windows_0_P.pak",
@@ -66,82 +32,40 @@
         "SteamSHA1": "9069d1b32c2cc30262dc8da85223896bbbb5c8a1",
         "Size": 1297
       }
-    ],
-    "ko-KR": [
-      {
-        "Name": "pakchunk501000-Windows_0_P.pak",
-        "Hash": "deb096f252df487fbc73f5f9c801129b53ac4330199a4cc6fa7b037182d84f5e",
-        "SteamSHA1": "2371981391ca52992ed608d3ddd62a0c00a7c913",
-        "Size": 3493193
-      },
-      {
-        "Name": "pakchunk501000-Windows_0_P.sig",
-        "Hash": "6447ea554f78c948687bf1ad9fd014d14ae4ea49cab98bff75a69563cf13ce24",
-        "SteamSHA1": "8cbbc4cd5aaa53f77e1230ceabd36fe96ccd6dc2",
-        "Size": 744
-      },
-      {
-        "Name": "pakchunk501000-Windows_0_P.ucas",
-        "Hash": "41191f5fcdef435d5cec3a4b3145ad77b8a1299ee344900bd669eeb4a0eda61b",
-        "SteamSHA1": "03107466e58077e3163ddc5d8d746d6e5534b0ec",
-        "Size": 48
-      },
-      {
-        "Name": "pakchunk501000-Windows_0_P.utoc",
-        "Hash": "58b82b0a1b6b7c62b4602478c05458674ced6d1cc834e9c743c0b29c975aa9be",
-        "SteamSHA1": "fb206d0a6c6cda3e561fb98d77fce03941ea36e2",
-        "Size": 1297
-      }
     ]
   },
   "PreviousFiles": [
     {
-      "Language": "en-US",
-      "SHA256": "d5705a7f92059dad24dc1396b919d2cdff41e7c05f267c9ff145a77bc82408e3"
+      "Language": "ja-JP",
+      "SHA256": "2fd231b068cc976298c4865cd5600dba2caecb3d091ec31d80958342b3d08b7c"
     },
     {
       "Language": "ja-JP",
       "SHA256": "600c65252060797c20659199feedd502ecffc6ba4349cd76923f6eb8cbd0c70a"
     },
     {
-      "Language": "ko-KR",
-      "SHA256": "a2a1606d50177913b771dc23416df6c6d51f5a8ae644df70e3029ef8f318ed60"
-    },
-    {
-      "Language": "en-US",
-      "SHA256": "f8eceea2b78f95118b230675e82b9f904129e3ae26a3bd8d2024872e7ca73dc6"
-    },
-    {
       "Language": "ja-JP",
       "SHA256": "e2e6bcf79170470ca0a4319b185883d795927f1854a29fe96d787d4170036788"
-    },
-    {
-      "Language": "ko-KR",
-      "SHA256": "01e2a3d5770293bf57a1dbb22db75e8e06584b94319580b6c4cebef4679ce522"
-    },
-    {
-      "Language": "en-US",
-      "SHA256": "909cc46b88a72151a3aff290765e9e653d2ec00b77ded3fb81b1ba2efd6c1bf6"
     },
     {
       "Language": "ja-JP",
       "SHA256": "da99c8f0ebc8e45836e933dc84ab69e67cd2cdb9352693ff9ff89f730cd52105"
     },
     {
-      "Language": "ko-KR",
-      "SHA256": "34e369db6b73094beb749dc501fcbb314fda98288cc81b14230e485f3a03f77b"
-    },
-    {
-      "Language": "en-US",
-      "SHA256": "93ed458a88df922a263e741343bb62f1f8d722638b6724e5ba6638ffde1f7faa"
-    },
-    {
       "Language": "ja-JP",
       "SHA256": "b848cfb1a76ac878fab62a2f7027b993d5bc45f99d32e0d3636b670e771c8da3"
     },
     {
-      "Language": "ko-KR",
-      "SHA256": "8ef1de69570fd3b1378d1f8b7410e973e31b7ad8f5d118de1b999e98928004c1"
+      "Language": "ja-JP",
+      "SHA256": "6e06450157c001ea6016fd376da399c57507c7f557148e70a2e91c584f56b0a0"
+    },
+    {
+      "Language": "ja-JP",
+      "SHA256": "73fe92f56d9a88263682a6c69172fe98d2d7a832c3152396e1f5e7bbc26b2f7c"
+    },
+    {
+      "Language": "ja-JP",
+      "SHA256": "35fa092c6d21a7788e62a8f5aec43851faba264eb1e52c37eb13beb80df11091"
     }
   ]
 }

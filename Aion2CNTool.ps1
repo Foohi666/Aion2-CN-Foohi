@@ -9,7 +9,7 @@ param(
     [switch]$Install,
     [switch]$Restore,
     [string]$Lang = "",
-    [ValidateSet('en-US', 'ja-JP', 'ko-KR')][string]$TargetLanguage = 'en-US'
+    [ValidateSet('en-US', 'ja-JP', 'ko-KR')][string]$TargetLanguage = 'ja-JP'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -36,7 +36,7 @@ $AppIds         = @('3393110', '4972320')
 # ==================== 控制台作者署名横幅 ====================
 function Show-Banner {
     Write-Host "========================================================================" -ForegroundColor Magenta
-    Write-Host "      AION 2 (Steam / PURPLE 正式版) 简繁双语一键汉化工具 v$CurrentVersion" -ForegroundColor Cyan
+    Write-Host "      AION 2 日文入口简繁汉化工具 v$CurrentVersion" -ForegroundColor Cyan
     Write-Host "      原作者：B站@吃素的佩奇 | 二次升级作者：Foohi" -ForegroundColor Gray
     Write-Host "      项目主页: https://github.com/Foohi666/Aion2-CN-Foohi" -ForegroundColor Gray
     Write-Host "      【声明】本工具完全免费分享，仅供交流学习，严禁倒卖牟利！" -ForegroundColor Red
@@ -505,6 +505,7 @@ function Show-Disclaimer {
 # ==================== 主流程 ====================
 Show-Banner
 if ($Install -eq $Restore) { throw '请指定 -Install 或 -Restore 中的一个。' }
+if ($Install -and $TargetLanguage -ne 'ja-JP') { throw '当前版本仅提供日文入口汉化；英文、韩文仅支持旧版还原。' }
 $target = Get-TextTarget $TargetLanguage
 $action = if ($Install) { 'Install' } else { 'Restore' }
 $verb = if ($Install) { "安装$LangName" } else { '还原' }

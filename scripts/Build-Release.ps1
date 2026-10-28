@@ -13,10 +13,10 @@ $notes = "## v$version · $($section.Groups[1].Value)`r`n`r`n" + $section.Groups
 $files = @('App.ps1','Aion2CNTool.ps1','TextPatch.ps1','Update.ps1','version.json','README.md','CHANGELOG.md','启动汉化工具.bat')
 foreach ($variant in 'zh','zh-TW') {
     $manifest = Get-Content -LiteralPath (Join-Path $root "$variant\payloads.json") -Raw | ConvertFrom-Json
-    if ($manifest.SteamBuildId -ne $metadata.steamBuildId -or @($manifest.Files).Count -ne 3) { throw "$variant 的数据版本或文件数量不匹配。" }
+    if ($manifest.SteamBuildId -ne $metadata.steamBuildId -or @($manifest.Files).Count -ne 1) { throw "$variant 的数据版本或文件数量不匹配。" }
     $files += "$variant\payloads.json"
-    foreach ($language in 'en-US','ja-JP','ko-KR') {
-        $path = if ($language -eq 'en-US') { "$variant\L10NString.dat" } else { "$variant\$language\L10NString.dat" }
+    foreach ($language in 'ja-JP') {
+        $path = "$variant\$language\L10NString.dat"
         $record = @($manifest.Files | Where-Object Language -eq $language)
         if ($record.Count -ne 1 -or (Get-FileHash -LiteralPath (Join-Path $root $path)).Hash -ne $record[0].SHA256) { throw "汉化文件校验失败：$path" }
         $files += $path

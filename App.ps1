@@ -191,7 +191,7 @@ function Get-AllGameRoots {
 
 # ==================== 构建独立现代化 UI 窗口 ====================
 $mainForm = New-Object System.Windows.Forms.Form
-$mainForm.Text = "永恒之塔2 (AION 2) 国际服简繁一键汉化 v$CurrentVersion 文字语言扩展版 - 原作者：B站@吃素的佩奇"
+$mainForm.Text = "永恒之塔2 (AION 2) 日文入口简繁汉化 v$CurrentVersion - 原作者：B站@吃素的佩奇"
 $mainForm.Size = New-Object System.Drawing.Size(760, 765)
 $mainForm.StartPosition = 'CenterScreen'
 $mainForm.FormBorderStyle = 'FixedDialog'
@@ -209,7 +209,7 @@ $topPanel.BackColor = [System.Drawing.Color]::FromArgb(255, 255, 255)
 $topPanel.BorderStyle = 'None'
 
 $lblTitle = New-Object System.Windows.Forms.Label
-$lblTitle.Text = "永恒之塔2 (AION 2) 国际服简繁一键汉化"
+$lblTitle.Text = "永恒之塔2 (AION 2) 日文入口简繁汉化"
 $lblTitle.Font = New-Object System.Drawing.Font("Microsoft YaHei UI", 16, [System.Drawing.FontStyle]::Bold)
 $lblTitle.ForeColor = [System.Drawing.Color]::FromArgb(17, 24, 39)
 $lblTitle.Location = New-Object System.Drawing.Point(22, 8)
@@ -338,7 +338,7 @@ $btnInstallTw.Enabled = $false
 $btnInstallTw.Cursor = [System.Windows.Forms.Cursors]::Hand
 
 $btnRestore = New-Object System.Windows.Forms.Button
-$btnRestore.Text = "还原所选文字语言"
+$btnRestore.Text = "还原【日文】"
 $btnRestore.Location = New-Object System.Drawing.Point(480, 136)
 $btnRestore.Size = New-Object System.Drawing.Size(205, 54)
 $btnRestore.BackColor = [System.Drawing.Color]::FromArgb(220, 38, 38)
@@ -352,19 +352,12 @@ $lblTarget = New-Object System.Windows.Forms.Label
 $lblTarget.Text = '游戏文字语言：'
 $lblTarget.Location = New-Object System.Drawing.Point(18, 95)
 $lblTarget.Size = New-Object System.Drawing.Size(125, 26)
-$cmbTarget = New-Object System.Windows.Forms.ComboBox
-$cmbTarget.DropDownStyle = 'DropDownList'
-$cmbTarget.Location = New-Object System.Drawing.Point(150, 91)
-$cmbTarget.Size = New-Object System.Drawing.Size(280, 28)
-$cmbTarget.Items.AddRange(@('英文 English', '日文 日本語', '韩文 한국어'))
-$TargetCodes = @('en-US', 'ja-JP', 'ko-KR')
-$cmbTarget.Add_SelectedIndexChanged({
-    $selected = Get-TextTarget $TargetCodes[$cmbTarget.SelectedIndex]
-    $btnRestore.Text = "还原【$($selected.Name)】"
-})
-$cmbTarget.SelectedIndex = 1
+$lblTargetValue = New-Object System.Windows.Forms.Label
+$lblTargetValue.Text = '日文 日本語'
+$lblTargetValue.Location = New-Object System.Drawing.Point(150, 95)
+$lblTargetValue.Size = New-Object System.Drawing.Size(280, 26)
 $lblScope = New-Object System.Windows.Forms.Label
-$lblScope.Text = '安装、还原均作用于所选语言'
+$lblScope.Text = '游戏内文字语言请选择 日本語'
 $lblScope.Location = New-Object System.Drawing.Point(450, 95)
 $lblScope.Size = New-Object System.Drawing.Size(240, 26)
 $lblScope.Font = New-Object System.Drawing.Font("Microsoft YaHei UI", 9)
@@ -392,7 +385,7 @@ $chkAgree.Add_CheckedChanged({
     }
 })
 
-$grpActions.Controls.AddRange(@($lblDiscText, $chkAgree, $btnInstallZh, $btnInstallTw, $btnRestore, $lblTarget, $cmbTarget, $lblScope))
+$grpActions.Controls.AddRange(@($lblDiscText, $chkAgree, $btnInstallZh, $btnInstallTw, $btnRestore, $lblTarget, $lblTargetValue, $lblScope))
 $mainForm.Controls.Add($grpActions)
 
 # --- 交互日志输出区域 ---
@@ -484,14 +477,14 @@ function Get-SelectedTargets {
     return $selected
 }
 
-# --- 执行所选文字语言的安装或还原 ---
+# --- 执行日文入口的安装或还原 ---
 function Execute-TextOperation($action, $langTitle, $sourceDir) {
     $targets = @(Get-SelectedTargets | Select-Object -Unique)
     if ($targets.Count -eq 0) {
         [System.Windows.Forms.MessageBox]::Show('请至少勾选一个目标游戏客户端。', '未选择客户端') | Out-Null
         return
     }
-    $code = $TargetCodes[$cmbTarget.SelectedIndex]
+    $code = 'ja-JP'
     $selected = Get-TextTarget $code
     $verb = if ($action -eq 'Install') { "安装$langTitle" } else { '还原' }
     $succeeded = 0
@@ -529,7 +522,7 @@ $btnRestore.Add_Click({ Execute-TextOperation 'Restore' '' '' })
 
 # --- 窗口加载初始化 ---
 $mainForm.Add_Shown({
-    Append-Log "欢迎使用 AION 2 国际服简繁双语一键汉化大师 v$CurrentVersion！"
+    Append-Log "欢迎使用 AION 2 日文入口简繁汉化 v$CurrentVersion！"
     Append-Log "原作者：B站@吃素的佩奇；二次升级作者：Foohi。适配 Steam build 26262663。"
     Run-Scan
 })

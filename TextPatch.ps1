@@ -18,6 +18,34 @@ function Get-TextBackupFile {
     return (Join-Path $Directory $Name)
 }
 
+function Convert-LegacyTextBackupExtensions {
+    param([string]$Root)
+    $directory = Join-Path $Root 'Aion2_English_Backup_Safe'
+    if (-not (Test-Path -LiteralPath $directory -PathType Container)) { return }
+    if ((Get-Item -LiteralPath $directory).Attributes -band [IO.FileAttributes]::ReparsePoint) {
+        throw '旧英文备份目录不能是链接。'
+    }
+    $pending = @(foreach ($extension in 'pak', 'sig', 'ucas', 'utoc') {
+        $path = Join-Path $directory "pakchunk502000-Windows_0_P.$extension"
+        if (Test-Path -LiteralPath $path -PathType Leaf) {
+            $safe = $path + '.bak'
+            $hash = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash
+            if ((Test-Path -LiteralPath $safe) -and
+                (Get-FileHash -LiteralPath $safe -Algorithm SHA256).Hash -ne $hash) {
+                throw "旧英文备份存在内容不一致的同名文件：$path"
+            }
+            [pscustomobject]@{ Path = $path; Safe = $safe; Hash = $hash }
+        }
+    })
+    foreach ($item in $pending) {
+        if (Test-Path -LiteralPath $item.Safe) { Remove-Item -LiteralPath $item.Path }
+        else { Rename-Item -LiteralPath $item.Path -NewName ([IO.Path]::GetFileName($item.Safe)) }
+        if ((Get-FileHash -LiteralPath $item.Safe -Algorithm SHA256).Hash -ne $item.Hash) {
+            throw "旧英文备份改名后校验失败：$($item.Safe)"
+        }
+    }
+}
+
 function Update-TextBackupForBuild {
     param($Root, $PakDir, $DatPath, $BackupDir, $Language, $BuildId, $Names, $PayloadInfo)
     $old = Get-Content -LiteralPath (Join-Path $BackupDir 'state.json') -Raw | ConvertFrom-Json
@@ -112,6 +140,9 @@ function Invoke-TextPatch {
     )
 
     $ErrorActionPreference = 'Stop'
+    if ($Action -eq 'Install' -and $TargetLanguage -ne 'ja-JP') {
+        throw '当前版本仅提供日文入口汉化；旧版英文、韩文汉化可使用还原操作。'
+    }
     $target = Get-TextTarget $TargetLanguage
     $root = (Resolve-Path -LiteralPath $GameRoot).ProviderPath.TrimEnd('\')
     $pakDir = Join-Path $root "Aion2\Content\Paks\L10N\Text\$TargetLanguage"
@@ -279,6 +310,8 @@ function Invoke-TextPatch {
             throw "语言切换补丁不属于当前备份记录，未覆盖或删除：$switchPak"
         }
     }
+    # 旧英文备份也会被跨语言扫描，需要一并隔离。
+    Convert-LegacyTextBackupExtensions -Root $root
     # 备份使用 .bak 扩展名，避免切换语言时被扫描为可加载的游戏资源。
     foreach ($name in $names) {
         $oldBackup = Join-Path $backupDir $name
