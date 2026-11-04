@@ -1,0 +1,65 @@
+{
+  "SchemaVersion": 1,
+  "SteamBuildId": "26429009",
+  "OriginalFile": {
+    "Path": "Aion2/Content/Paks/pakchunk0-Windows.pak",
+    "Size": 34306406,
+    "SHA256": "bd9f67f3ee05be24849e8a20daa6e299bb8cee21162529abb58492227ee6ea4a"
+  },
+  "PatchedSHA256": "04dfdb9f72d1bdcb00cf47f6135fa16213a4f518d5da188917ec84cee84ecc27",
+  "AliasDirection": "encoded-to-display",
+  "Regions": [
+    {
+      "Offset": 16322393,
+      "Length": 32784,
+      "BeforeSHA256": "24d62bc7f111547af31a0b518637fdd75b36edb4151411c7c48d8b2dc3e03ba8",
+      "AfterSHA256": "d8ea64e430bc5410b26c338250de0e9a9c3466bbb6802fa0819627faa55730e1",
+      "DataFile": "font/zh/blocks/block-261.bin"
+    },
+    {
+      "Offset": 16355177,
+      "Length": 11984,
+      "BeforeSHA256": "17c9f916d89ac9f272ad44fb7d3e5a62c7e113db4750841970249061b782e9be",
+      "AfterSHA256": "dec2692f442e8c5a1c4368318687603ddbfe2087ae02653e2840d6c7c10ddd60",
+      "DataFile": "font/zh/blocks/block-262.bin"
+    },
+    {
+      "Offset": 16367161,
+      "Length": 16384,
+      "BeforeSHA256": "ce5b9a2409e211d477077f9420b38ce885375851ac936462b07b75809348c3a4",
+      "AfterSHA256": "1eb3a5d2c3c24e52224a762a7e300212d169e1a590ee3980b4d74185d6d39b04",
+      "DataFile": "font/zh/blocks/block-263.bin"
+    },
+    {
+      "Offset": 16383545,
+      "Length": 5136,
+      "BeforeSHA256": "0287dc17516dd5b7ec04d9f57b706d528de22524bd0af26880d1e7aa2a6b249d",
+      "AfterSHA256": "43c9f00b3c5a4259ec5d1791e4c41a8a0d61e01ecdeff39f516e8f2977442d62",
+      "DataFile": "font/zh/blocks/block-264.bin"
+    },
+    {
+      "Offset": 2537472,
+      "Length": 4953,
+      "BeforeSHA256": "22207fe37d1a277f8aa053d5c09d21c47ad1c450e357d445ba7a5a1a2a0f74b0",
+      "AfterSHA256": "a85466d70d094ccf9b4e8234f794128957449937bccbbd16aa7548b1c7b5f5e3",
+      "DataFile": "font/zh/blocks/header.bin"
+    }
+  ],
+  "AssetFiles": [
+    {
+      "Path": "font/zh/aliases.json",
+      "Size": 20818,
+      "SHA256": "e3c5a938816d657a721094d33de084287ef3f2733fd814681772cf496b3066f9"
+    },
+    {
+      "Path": "font/OFL.txt",
+      "Size": 4301,
+      "SHA256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+    },
+    {
+      "Path": "font/NOTICE.txt",
+      "Size": 860,
+      "SHA256": "4c5f4519cc93eb7e9db548acc94bc73c6d18deddb3b4136056eea7e3c6b40825"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "SchemaVersion": 1,
+  "SteamBuildId": "26429009",
+  "OriginalFile": {
+    "Path": "Aion2/Content/Paks/pakchunk0-Windows.pak",
+    "Size": 34306406,
+    "SHA256": "bd9f67f3ee05be24849e8a20daa6e299bb8cee21162529abb58492227ee6ea4a"
+  },
+  "PatchedSHA256": "4aaf3d497f74f25a89fc5783f97bb4446459cecb5c02f49d53487d5d0d6caff6",
+  "AliasDirection": "encoded-to-display",
+  "Regions": [
+    {
+      "Offset": 16322393,
+      "Length": 32784,
+      "BeforeSHA256": "24d62bc7f111547af31a0b518637fdd75b36edb4151411c7c48d8b2dc3e03ba8",
+      "AfterSHA256": "c708af3f7c93ccb9b068335ec35e0ac3401259bcc485f06d8b1dd4de18344f2d",
+      "DataFile": "font/zh-TW/blocks/block-261.bin"
+    },
+    {
+      "Offset": 16355177,
+      "Length": 11984,
+      "BeforeSHA256": "17c9f916d89ac9f272ad44fb7d3e5a62c7e113db4750841970249061b782e9be",
+      "AfterSHA256": "4d130685b511bd48fe99b5b35008e9a46c5dce6d9a6cebff45dacc9e94320010",
+      "DataFile": "font/zh-TW/blocks/block-262.bin"
+    },
+    {
+      "Offset": 16367161,
+      "Length": 16384,
+      "BeforeSHA256": "ce5b9a2409e211d477077f9420b38ce885375851ac936462b07b75809348c3a4",
+      "AfterSHA256": "35661f5c146155f4fe7f2fcc539eed2554ba3591a290f90e6fdcd728c1f51707",
+      "DataFile": "font/zh-TW/blocks/block-263.bin"
+    },
+    {
+      "Offset": 2537472,
+      "Length": 4953,
+      "BeforeSHA256": "22207fe37d1a277f8aa053d5c09d21c47ad1c450e357d445ba7a5a1a2a0f74b0",
+      "AfterSHA256": "b5866bce87d699008e3c739556e54c19249547518b618a91c399e397062c44d3",
+      "DataFile": "font/zh-TW/blocks/header.bin"
+    }
+  ],
+  "AssetFiles": [
+    {
+      "Path": "font/zh-TW/aliases.json",
+      "Size": 19890,
+      "SHA256": "13e115343f303cc22a15a1ca741d235059c5281c8346f9c920e8face7af5f737"
+    },
+    {
+      "Path": "font/OFL.txt",
+      "Size": 4301,
+      "SHA256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+    },
+    {
+      "Path": "font/NOTICE.txt",
+      "Size": 860,
+      "SHA256": "4c5f4519cc93eb7e9db548acc94bc73c6d18deddb3b4136056eea7e3c6b40825"
+    }
+  ]
+}

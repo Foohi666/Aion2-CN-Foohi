@@ -10,11 +10,38 @@ $pattern = '(?ms)^## \[' + [regex]::Escape($version) + '\] - (\d{4}-\d{2}-\d{2})
 $section = [regex]::Match($log, $pattern)
 if (-not $section.Success -or $section.Groups[2].Value.Trim().Length -lt 20) { throw "缺少 v$version 的版本更新记录，停止打包。" }
 $notes = "## v$version · $($section.Groups[1].Value)`r`n`r`n" + $section.Groups[2].Value.Trim()
-$files = @('App.ps1','Aion2CNTool.ps1','TextPatch.ps1','Update.ps1','version.json','README.md','CHANGELOG.md','启动汉化工具.bat')
+$fontBaseline=$null
+$files = @('App.ps1','Aion2CNTool.ps1','TextPatch.ps1','PackedPatch.ps1','Update.ps1','version.json','README.md','CHANGELOG.md','启动汉化工具.bat')
 foreach ($variant in 'zh','zh-TW') {
     $manifest = Get-Content -LiteralPath (Join-Path $root "$variant\payloads.json") -Raw | ConvertFrom-Json
     if ($manifest.SteamBuildId -ne $metadata.steamBuildId -or @($manifest.Files).Count -ne 1) { throw "$variant 的数据版本或文件数量不匹配。" }
     $files += "$variant\payloads.json"
+    if ($manifest.InstallationMode -eq 'PackedFontAlias') {
+        $fontPath = "font/$variant/manifest.json"
+        if ($manifest.FontPatchManifest -ne $fontPath) { throw '字体清单路径不匹配。' }
+        $font = Get-Content -LiteralPath (Join-Path $root $fontPath) -Raw | ConvertFrom-Json
+        if ($font.SchemaVersion -ne 1 -or $font.SteamBuildId -ne $metadata.steamBuildId -or $font.PatchedSHA256 -notmatch '^[0-9a-fA-F]{64}$') { throw '字体清单无效。' }
+        if ($fontBaseline -and ($font.OriginalFile.Path -ne $fontBaseline.Path -or $font.OriginalFile.SHA256 -ne $fontBaseline.SHA256 -or $font.OriginalFile.Size -ne $fontBaseline.Size)) { throw '字体原件基线不一致。' }
+        $fontBaseline = $font.OriginalFile
+        $files += $fontPath
+        foreach ($record in @($font.Regions)) {
+            $path = [string]$record.DataFile
+            if ($path -notmatch ('^font/'+[regex]::Escape($variant)+'/blocks/[A-Za-z0-9_-]+\.bin$') -or $record.Length -le 0 -or $record.Length -gt 1048576) { throw '字体数据路径或长度无效。' }
+            $full = Join-Path $root $path
+            if ((Get-Item -LiteralPath $full).Length -ne $record.Length -or (Get-FileHash -LiteralPath $full -Algorithm SHA256).Hash -ne $record.AfterSHA256) { throw "字体数据校验失败：$path" }
+            $files += $path
+        }
+        $expectedAssets = @("font/$variant/aliases.json",'font/OFL.txt','font/NOTICE.txt')
+        if (@($font.AssetFiles).Count -ne 3) { throw '字体附件数量不匹配。' }
+        foreach ($record in @($font.AssetFiles)) {
+            $path = [string]$record.Path
+            if ($expectedAssets -notcontains $path) { throw '字体附件路径无效或重复。' }
+            $expectedAssets = @($expectedAssets | Where-Object { $_ -ne $path })
+            $full = Join-Path $root $path
+            if ((Get-Item -LiteralPath $full).Length -ne $record.Size -or (Get-FileHash -LiteralPath $full -Algorithm SHA256).Hash -ne $record.SHA256) { throw "字体附件校验失败：$path" }
+            $files += $path
+        }
+    }
     foreach ($language in 'ja-JP') {
         $path = "$variant\$language\L10NString.dat"
         $record = @($manifest.Files | Where-Object Language -eq $language)
@@ -22,6 +49,7 @@ foreach ($variant in 'zh','zh-TW') {
         $files += $path
     }
 }
+$files = @($files | Select-Object -Unique)
 foreach ($name in $files) {
     $path = Join-Path $root $name
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "缺少发布文件：$name" }

@@ -158,6 +158,28 @@ function Invoke-TextPatch {
     $names = @(@('pak', 'sig', 'ucas', 'utoc') | ForEach-Object { "$stem.$_" })
     $backupDir = Join-Path $root "Aion2_Text_Backup\$TargetLanguage"
     $statePath = Join-Path $backupDir 'state.json'
+    if ($TargetLanguage -eq 'ja-JP') {
+        $packedStatePath = Join-Path $backupDir 'PackedFontAlias\state.json'
+        $packedProjectRoot = $PSScriptRoot
+        $packedVariant = 'zh'
+        $packedInstall = $false
+        if ($SourceDir) {
+            $resolvedSource = (Resolve-Path -LiteralPath $SourceDir).ProviderPath.TrimEnd('\')
+            $packedVariant = Split-Path $resolvedSource -Leaf
+            $packedProjectRoot = Split-Path $resolvedSource -Parent
+            $packedMetaPath = Join-Path $resolvedSource 'payloads.json'
+            if ($Action -eq 'Install' -and (Test-Path -LiteralPath $packedMetaPath -PathType Leaf)) {
+                $packedMeta = Get-Content -LiteralPath $packedMetaPath -Raw | ConvertFrom-Json
+                $packedInstall = $packedMeta.InstallationMode -eq 'PackedFontAlias'
+            }
+        }
+        if ($packedInstall -or ($Action -eq 'Restore' -and (Test-Path -LiteralPath $packedStatePath -PathType Leaf))) {
+            if ($packedVariant -notin @('zh','zh-TW')) { throw '汉化数据目录必须为 zh 或 zh-TW。' }
+            . (Join-Path $PSScriptRoot 'PackedPatch.ps1')
+            Convert-LegacyTextBackupExtensions -Root $root
+            return (Invoke-PackedJapanesePatch -Action $Action -GamePath $root -Variant $packedVariant -ProjectRoot $packedProjectRoot)
+        }
+    }
     $buildId = ''
     $steamApps = Split-Path (Split-Path $root -Parent) -Parent
     foreach ($appId in @('3393110', '4972320')) {

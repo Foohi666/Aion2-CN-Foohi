@@ -1,3 +1,5 @@
 dist/
 __pycache__/
 *.log
+AGENTS.md
+/docs/内部维护/

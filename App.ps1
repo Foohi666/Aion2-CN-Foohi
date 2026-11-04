@@ -299,14 +299,14 @@ $grpActions.ForeColor = [System.Drawing.Color]::FromArgb(31, 41, 55)
 $grpActions.Font = New-Object System.Drawing.Font("Microsoft YaHei UI", 9.5, [System.Drawing.FontStyle]::Bold)
 
 $lblDiscText = New-Object System.Windows.Forms.Label
-$lblDiscText.Text = "本工具完全免费且开源，仅供个人交流学习，严禁任何淘宝/网店倒卖牟利！"
+$lblDiscText.Text = "本工具免费开源，严禁倒卖；文字复制、搜索及昵称显示可能受影响，详见 README。"
 $lblDiscText.Location = New-Object System.Drawing.Point(16, 24)
 $lblDiscText.Size = New-Object System.Drawing.Size(675, 24)
 $lblDiscText.ForeColor = [System.Drawing.Color]::FromArgb(75, 85, 99)
 $lblDiscText.Font = New-Object System.Drawing.Font("Microsoft YaHei UI", 9.5)
 
 $chkAgree = New-Object System.Windows.Forms.CheckBox
-$chkAgree.Text = "我已知晓安装汉化将替换客户端文本数据，自愿承担相关风险，承诺不用于商业牟利"
+$chkAgree.Text = "我已了解文本和字体修改的风险，以及复制、搜索、昵称显示的影响，承诺不用于商业牟利"
 $chkAgree.Location = New-Object System.Drawing.Point(16, 56)
 $chkAgree.Size = New-Object System.Drawing.Size(670, 26)
 $chkAgree.ForeColor = [System.Drawing.Color]::FromArgb(180, 83, 9)

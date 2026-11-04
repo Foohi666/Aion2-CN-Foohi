@@ -391,7 +391,7 @@ function Show-Disclaimer {
     $banner.Controls.Add($icon)
 
     $title = New-Object System.Windows.Forms.Label
-    $title.Text = '重要操作风险说明 (Steam / PURPLE 通用)'
+    $title.Text = '安装与还原说明（当前适配 Steam）'
     $title.Font = New-Object System.Drawing.Font('Microsoft YaHei UI', 15, [System.Drawing.FontStyle]::Bold)
     $title.ForeColor = [System.Drawing.Color]::FromArgb(255,165,0)
     $title.Location = New-Object System.Drawing.Point(58,16)
@@ -407,10 +407,10 @@ function Show-Disclaimer {
     $form.Controls.SetChildIndex($body, 0)
 
     $items = @(
-        '1. 本工具会向游戏目录释放汉化数据文件，并备份所选文字语言包。',
+        '1. 本工具会修改日文文字及配套字体，并备份同版本原文件。',
         '2. 任何客户端修改都可能违反游戏服务条款，相关风险由使用者自行承担。',
         '3. 执行过程中请勿启动游戏或中断任务，避免客户端文件损坏。',
-        '4. 本工具操作前会先自动备份原文件，可对所选文字语言单独还原。'
+        '4. 汉化可能影响复制、搜索及昵称显示；还原会恢复文字和字体。'
     )
     $y = 12
     foreach ($it in $items) {
