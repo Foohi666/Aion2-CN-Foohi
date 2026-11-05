@@ -497,6 +497,7 @@ function Execute-TextOperation($action, $langTitle, $sourceDir) {
                 $result = Invoke-TextPatch -GameRoot $gameRoot -TargetLanguage $code -Action $action -SourceDir $sourceDir
                 $succeeded++
                 Append-Log "完成；备份：$($result.Backup)"
+                if ($result.PSObject.Properties['ArchivedText'] -and $result.ArchivedText) { Append-Log "外置日文文字表已保留：$($result.ArchivedText)" }
                 if ($result.LegacyBackup) { Append-Log '使用原工具英文备份；该备份未记录游戏版本。' }
             } catch {
                 Append-Log "【失败】$($_.Exception.Message)"

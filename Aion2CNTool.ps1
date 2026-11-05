@@ -518,6 +518,7 @@ foreach ($gameRoot in $selectedRoots) {
         $result = Invoke-TextPatch -GameRoot $gameRoot -TargetLanguage $TargetLanguage -Action $action -SourceDir $ActiveSourceDir
         Write-Host "$verb / $($target.Name) 完成：$gameRoot" -ForegroundColor Green
         Write-Host "备份：$($result.Backup)"
+        if ($result.PSObject.Properties['ArchivedText'] -and $result.ArchivedText) { Write-Host "外置日文文字表已保留：$($result.ArchivedText)" }
         if ($result.LegacyBackup) { Write-Host '使用原工具英文备份；该备份未记录游戏版本。' -ForegroundColor Yellow }
     } catch {
         $failed++

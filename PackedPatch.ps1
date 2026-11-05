@@ -96,7 +96,12 @@
         if (-not $state -and $h -ne $r.Hash) { throw '已有修改文件但缺少本模式可信备份，请恢复官方原版。' }
     }
     $loose=Child $game 'Aion2/Content/L10N/Text/ja-JP/L10NString.dat'
-    if (Test-Path -LiteralPath $loose) { throw '存在外置日文DAT，请先还原或隔离后重试。' }
+    $looseHash=$null;$looseArchive=$null;$looseMoved=$false
+    if (Test-Path -LiteralPath $loose) {
+        if ($Action -ne 'Install' -or -not [IO.File]::Exists($loose)) { throw '存在外置日文DAT，请保留并移出游戏文字目录后重试。' }
+        $looseHash=Hash $loose
+        $looseArchive=Child $backup ('ExternalText/L10NString.'+[guid]::NewGuid().ToString('N')+'.dat.bak')
+    }
     if (-not $state) {
         New-Item -ItemType Directory -Path $backup -Force|Out-Null
         foreach($r in $records) {
@@ -143,6 +148,12 @@
         }
         if (Get-Process -Name 'Aion2','Aion2-Win64-Shipping' -ErrorAction SilentlyContinue) { throw '游戏已启动，操作取消。' }
         foreach($s in $stages) {if($(if([IO.File]::Exists($s.Target)){Hash $s.Target}else{$null}) -ne $s.Before){throw '操作期间文件发生变化。'}}
+        if ($looseHash) {
+            Check $loose $looseHash
+            New-Item -ItemType Directory -Path (Split-Path $looseArchive -Parent) -Force|Out-Null
+            [IO.File]::Move($loose,$looseArchive);$looseMoved=$true
+            Check $looseArchive $looseHash
+        } elseif (Test-Path -LiteralPath $loose) { throw '操作期间出现外置文字表，请重新安装。' }
         foreach($s in $stages) {
             if($null -eq $s.Before){[IO.File]::Move($s.Stage,$s.Target)}else{[IO.File]::Replace($s.Stage,$s.Target,$s.Undo)}
             $committed+=$s
@@ -154,11 +165,14 @@
             $s=$committed[$i]
             try {if($null -eq $s.Before){Remove-Item -LiteralPath $s.Target -Force}else{Copy-Item -LiteralPath $s.Undo -Destination $s.Target -Force;Check $s.Target $s.Before}} catch {$rollbackErrors+=$_.Exception.Message}
         }
-        if($rollbackErrors.Count){throw ('操作失败且回滚不完整，请保留rollback.bak：'+($rollbackErrors -join '; '))}
+        if ($looseMoved) {
+            try {[IO.File]::Move($looseArchive,$loose);Check $loose $looseHash} catch {$rollbackErrors+=$_.Exception.Message}
+        }
+        if($rollbackErrors.Count){throw ('操作失败且回滚不完整，请保留rollback.bak和ExternalText备份：'+($rollbackErrors -join '; '))}
         throw $failure
     } finally {
         # Retain rollback files if rollback was incomplete; clean only known owned files otherwise.
         foreach($p in $temporary) {if([IO.File]::Exists($p) -and ($p -notlike '*.rollback.bak' -or -not $rollbackErrors.Count)){Remove-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue}}
     }
-    [pscustomobject]@{Action=$Action;Language='ja-JP';Backup=$backup;Setting='日本語';LegacyBackup=$false}
+    [pscustomobject]@{Action=$Action;Language='ja-JP';Backup=$backup;Setting='日本語';LegacyBackup=$false;ArchivedText=$looseArchive}
 }
