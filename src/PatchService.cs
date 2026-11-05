@@ -28,6 +28,7 @@ namespace Foohi.Aion2
         public List<TextFile> Files;
         public Dictionary<string, List<NativeFile>> OriginalFiles;
         public PackedFile PackedFile;
+        public List<string> PreviousPackedHashes;
     }
     internal sealed class FontOrigin { public string Path, SHA256; public long Size; }
     internal sealed class FontRegion { public long Offset; public int Length; public string BeforeSHA256, AfterSHA256, DataFile; }
@@ -275,6 +276,8 @@ namespace Foohi.Aion2
             TextManifest text = Disk.ReadJson<TextManifest>(Disk.Under(package, variant + "/payloads.json"));
             if (text.InstallationMode != "PackedFontAlias" || text.SteamBuildId != metadata.steamBuildId || text.FontPatchManifest != "font/" + variant + "/manifest.json")
                 throw new IOException("文字数据与版本清单不匹配。");
+            if (text.PreviousPackedHashes != null && text.PreviousPackedHashes.Any(hash => !Regex.IsMatch(hash ?? "", @"\A[a-fA-F0-9]{64}\z")))
+                throw new IOException("旧版文字资源哈希清单无效。");
             FontManifest font = Disk.ReadJson<FontManifest>(Disk.Under(package, text.FontPatchManifest));
             if (font.SchemaVersion != 1 || font.SteamBuildId != metadata.steamBuildId || font.OriginalFile.Path != NativeFont)
                 throw new IOException("字体清单不匹配。");
@@ -308,11 +311,17 @@ namespace Foohi.Aion2
             return file.Hash;
         }
 
+        private static bool PreviousPacked(Profile profile, BackupFile file, string hash)
+        {
+            return file.Relative != NativeFont && file.Backup.EndsWith(".pak.bak", StringComparison.Ordinal) &&
+                profile.Text.PreviousPackedHashes != null && profile.Text.PreviousPackedHashes.Any(previous => Disk.Same(previous, hash));
+        }
+
         public InstallationInfo Inspect(string gameRoot)
         {
             GameLocation game = Locate(gameRoot);
             Profile simple = LoadProfile("zh"), traditional = LoadProfile("zh-TW");
-            bool native = true, sc = true, tc = true;
+            bool native = true, sc = true, tc = true, oldSc = true, oldTc = true;
             foreach (BackupFile file in simple.Native)
             {
                 string path = Disk.Under(game.Root, file.Relative);
@@ -320,12 +329,18 @@ namespace Foohi.Aion2
                 native &= Disk.Same(hash, file.Hash);
                 sc &= Disk.Same(hash, Expected(simple, file));
                 tc &= Disk.Same(hash, Expected(traditional, file));
+                bool languagePak = file.Relative != NativeFont && file.Backup.EndsWith(".pak.bak", StringComparison.Ordinal);
+                oldSc &= languagePak ? PreviousPacked(simple, file, hash) : Disk.Same(hash, Expected(simple, file));
+                oldTc &= languagePak ? PreviousPacked(traditional, file, hash) : Disk.Same(hash, Expected(traditional, file));
             }
             bool hasState = File.Exists(Disk.Under(game.Root, BackupFolder + "/state.json"));
-            string status = native ? "原版资源匹配，可安装" : sc ? "已安装简体中文" : tc ? "已安装繁体中文" : "资源不匹配或不完整";
+            if (hasState && (sc || tc || oldSc || oldTc))
+                ValidateBackup(Disk.ReadJson<BackupState>(Disk.Under(game.Root, BackupFolder + "/state.json")), simple.Native, Disk.Under(game.Root, BackupFolder));
+            bool earlier = (oldSc || oldTc) && hasState;
+            string status = earlier && !sc && !tc ? "已安装较早版本，可更新" : native ? "原版资源匹配，可安装" : sc ? "已安装简体中文" : tc ? "已安装繁体中文" : "资源不匹配或不完整";
             if ((sc || tc) && !hasState) status += " · 缺少还原备份";
             if (game.Client != "Steam") status += " · 此启动器尚未游戏内实测";
-            return new InstallationInfo { BuildId = game.Build ?? "按资源文件核验", ClientLabel = game.Client, ContentMatches = native || ((sc || tc) && hasState), Status = status };
+            return new InstallationInfo { BuildId = game.Build ?? "按资源文件核验", ClientLabel = game.Client, ContentMatches = native || ((sc || tc || earlier) && hasState), Status = status };
         }
 
         public void Install(string gameRoot, string variant, Action<string> log) { Operate(gameRoot, variant, false, log); }
@@ -357,7 +372,7 @@ namespace Foohi.Aion2
                     bool installed = Disk.Same(current, Expected(selected, file)) || Disk.Same(current, Expected(other, file));
                     if (state != null)
                     {
-                        if (!original && !installed) throw new IOException("当前资源已改变，停止覆盖：" + active);
+                        if (!original && !installed && !PreviousPacked(selected, file, current) && !PreviousPacked(other, file, current)) throw new IOException("当前资源已改变，停止覆盖：" + active);
                         sources[file.Relative] = Disk.Under(backup, file.Backup);
                     }
                     else if (original) sources[file.Relative] = active;
