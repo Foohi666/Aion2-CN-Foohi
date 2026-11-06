@@ -7,6 +7,7 @@ Foohi 负责程序实现与维护。界面、安装、还原和更新检查以 C
 [下载正式版](https://github.com/Foohi666/Aion2-CN-Foohi/releases/latest) · [更新记录](CHANGELOG.md) · [数据来源](SOURCES.md)
 
 ## 使用
+PS：提示无法汉化失败的，请steam验证文件完整性修复完成再汉化，提示版本不匹配的请检查更新版本
 
 1. 下载 ZIP，完整解压到一个独立目录，运行 `Foohi.Aion2.exe`。
 2. 完全退出游戏。程序打开后自动查找一次 Steam 与 NC／PURPLE 游戏目录；多个结果可从目录下拉框选择。未找到时，手动选择包含 `Aion2` 文件夹的游戏根目录。
