@@ -5,7 +5,7 @@ namespace Foohi.Aion2
 {
     internal static class Program
     {
-        public const string Version = "2.0.1";
+        public const string Version = "2.0.2";
 
         [STAThread]
         private static void Main(string[] args)

@@ -4,7 +4,7 @@
   "Files": [
     {
       "Language": "ja-JP",
-      "SHA256": "0964e69d880ec43a5d911aa523bcd87fc58e20f01038a74d79d1fdd3dc7133a6"
+      "SHA256": "5ae65a432e2c0aa795da16a924840ab79dcfa25c69247080b279fda278217ec2"
     }
   ],
   "OriginalFiles": {
@@ -88,7 +88,7 @@
     ]
   },
   "PackedFile": {
-    "SHA256": "1fbaf6e9db190acd65b402ebd0c8c89363917e921d874014215c5cde0fd3d26c",
+    "SHA256": "6ba5b4a085551359945095780624beee48950722c2d55d8e0433adca6e20907b",
     "Size": 3836918,
     "PayloadOffset": 53,
     "PayloadLength": 3836404,
@@ -97,6 +97,7 @@
   "FontPatchManifest": "font/zh-TW/manifest.json",
   "PreviousPackedHashes": [
     "18e5f8aa91a82dbe3de8f1729c715e9d195b992784409d745039b6c1f3bf77a7",
-    "1107fd9a4b8292f16961ea1c71826aeff46ae14db08621a9b006fa0e0d8250d7"
+    "1107fd9a4b8292f16961ea1c71826aeff46ae14db08621a9b006fa0e0d8250d7",
+    "1fbaf6e9db190acd65b402ebd0c8c89363917e921d874014215c5cde0fd3d26c"
   ]
 }
