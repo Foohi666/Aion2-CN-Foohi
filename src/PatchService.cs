@@ -334,10 +334,10 @@ namespace Foohi.Aion2
                 oldTc &= languagePak ? PreviousPacked(traditional, file, hash) : Disk.Same(hash, Expected(traditional, file));
             }
             bool hasState = File.Exists(Disk.Under(game.Root, BackupFolder + "/state.json"));
-            if (hasState && (sc || tc || oldSc || oldTc))
+            if (!native && hasState && (sc || tc || oldSc || oldTc))
                 ValidateBackup(Disk.ReadJson<BackupState>(Disk.Under(game.Root, BackupFolder + "/state.json")), simple.Native, Disk.Under(game.Root, BackupFolder));
             bool earlier = (oldSc || oldTc) && hasState;
-            string status = earlier && !sc && !tc ? "已安装较早版本，可更新" : native ? "原版资源匹配，可安装" : sc ? "已安装简体中文" : tc ? "已安装繁体中文" : "资源不匹配或不完整";
+            string status = native ? "原版资源匹配，可安装" : earlier && !sc && !tc ? "已安装较早版本，可更新" : sc ? "已安装简体中文" : tc ? "已安装繁体中文" : "资源不匹配或不完整";
             if ((sc || tc) && !hasState) status += " · 缺少还原备份";
             if (game.Client != "Steam") status += " · 此启动器尚未游戏内实测";
             return new InstallationInfo { BuildId = game.Build ?? "按资源文件核验", ClientLabel = game.Client, ContentMatches = native || ((sc || tc || earlier) && hasState), Status = status };
@@ -360,7 +360,9 @@ namespace Foohi.Aion2
                 if (!Disk.Same(selected.Font.OriginalFile.SHA256, other.Font.OriginalFile.SHA256)) throw new IOException("简繁字体的原版基线不一致。");
                 string backup = Disk.Under(game.Root, BackupFolder), statePath = Disk.Under(backup, "state.json");
                 BackupState state = File.Exists(statePath) ? Disk.ReadJson<BackupState>(statePath) : null;
-                if (state != null) ValidateBackup(state, selected.Native, backup);
+                bool migrate = !restoring && state != null && state.SchemaVersion == 1 &&
+                    !String.IsNullOrEmpty(state.BuildId) && state.BuildId != metadata.steamBuildId;
+                if (state != null && !migrate) ValidateBackup(state, selected.Native, backup);
                 else if (restoring) throw new IOException("缺少可信还原备份，请通过启动器修复原版文件。");
                 log("正在核验日文资源与字体文件…");
                 var sources = new Dictionary<string, string>();
@@ -370,7 +372,13 @@ namespace Foohi.Aion2
                     string current = File.Exists(active) ? Disk.Hash(active) : null;
                     bool original = Disk.Same(current, file.Hash);
                     bool installed = Disk.Same(current, Expected(selected, file)) || Disk.Same(current, Expected(other, file));
-                    if (state != null)
+                    if (migrate)
+                    {
+                        if (!original || new FileInfo(active).Length != file.Size)
+                            throw new IOException("旧备份属于其他版本，且当前资源与本版原件不匹配：" + active);
+                        sources[file.Relative] = active;
+                    }
+                    else if (state != null)
                     {
                         if (!original && !installed && !PreviousPacked(selected, file, current) && !PreviousPacked(other, file, current)) throw new IOException("当前资源已改变，停止覆盖：" + active);
                         sources[file.Relative] = Disk.Under(backup, file.Backup);
@@ -384,6 +392,15 @@ namespace Foohi.Aion2
                 List<ArchiveMove> archives = CollectLegacyArchives(game.Root);
                 string external = Disk.Under(game.Root, "Aion2/Content/L10N/Text/ja-JP/L10NString.dat");
                 AddExternalArchive(archives, external, backup);
+                string archived = null;
+                BackupState previous = null;
+                if (migrate)
+                {
+                    archived = Disk.Under(game.Root, BackupFolder + ".previous-" + Guid.NewGuid().ToString("N"));
+                    Directory.Move(backup, archived);
+                    previous = state;
+                    state = null;
+                }
                 if (state == null)
                 {
                     Directory.CreateDirectory(backup);
@@ -412,9 +429,30 @@ namespace Foohi.Aion2
                     Commit(changes, archives, log);
                 }
                 finally { CleanStages(changes); }
+                if (previous != null) CleanPreviousBackup(archived, previous, selected.Native, log);
                 log(restoring ? "还原完成：日文资源与字体已恢复原版。" : "安装完成。进入游戏后，文字语言请选择「日本語」。");
                 log("原版备份：" + backup);
             });
+        }
+
+        private static void CleanPreviousBackup(string folder, BackupState previous, List<BackupFile> expected, Action<string> log)
+        {
+            try
+            {
+                foreach (BackupFile file in expected)
+                {
+                    BackupFile old = previous.Files == null ? null : previous.Files.FirstOrDefault(item =>
+                        item != null && item.Relative == file.Relative && item.Backup == file.Backup);
+                    if (old == null || old.Size <= 0 || !Regex.IsMatch(old.Hash ?? "", @"\A[a-fA-F0-9]{64}\z")) continue;
+                    string path = Disk.Under(folder, file.Backup);
+                    if (File.Exists(path) && new FileInfo(path).Length == old.Size && Disk.Same(Disk.Hash(path), old.Hash))
+                        File.Delete(path);
+                }
+                File.Delete(Disk.Under(folder, "state.json"));
+                if (!Directory.EnumerateFileSystemEntries(folder).Any()) Directory.Delete(folder);
+            }
+            catch (IOException) { log("部分旧备份未能清理：" + folder); }
+            catch (UnauthorizedAccessException) { log("部分旧备份未能清理：" + folder); }
         }
 
         private void ValidateBackup(BackupState state, List<BackupFile> expected, string folder)
@@ -451,7 +489,10 @@ namespace Foohi.Aion2
         {
             PackedFile layout = profile.Text.PackedFile;
             TextFile[] payload = profile.Text.Files.Where(x => x.Language == "ja-JP").ToArray();
-            if (payload.Length != 1 || layout.PayloadLength != 3836404 || layout.PayloadOffset != 53 || layout.PayloadHashOffset != 28 || layout.Size != 3836918)
+            long originalSize = profile.Native.Single(file => file.Relative != NativeFont && file.Backup.EndsWith(".pak.bak", StringComparison.Ordinal)).Size;
+            if (payload.Length != 1 || layout == null || layout.PayloadOffset != 53 || layout.PayloadHashOffset != 28 ||
+                layout.Size != originalSize || new FileInfo(path).Length != originalSize ||
+                layout.PayloadLength <= 0 || layout.PayloadOffset > layout.Size - layout.PayloadLength)
                 throw new IOException("日文资源包布局不受支持。");
             string textPath = Disk.Under(package, profile.Variant + "/ja-JP/L10NString.dat");
             Disk.Verify(textPath, payload[0].SHA256, layout.PayloadLength);
